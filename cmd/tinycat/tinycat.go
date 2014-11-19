@@ -88,11 +88,13 @@ func main() {
 		return
 	}
 
+	fullQuery := fmt.Sprintf("%s %s", *query, strings.Join(flag.Args(), " "))
+
 	index, err := bleve.Open("tc.bleve")
 	if err != nil {
 		log.Fatal(err)
 	}
-	q := bleve.NewQueryStringQuery(*query)
+	q := bleve.NewQueryStringQuery(fullQuery)
 	searchRequest := bleve.NewSearchRequest(q)
 	searchResult, _ := index.Search(searchRequest)
 	fmt.Println(searchResult.String())
