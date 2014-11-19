@@ -44,6 +44,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+		defer index.Close()
 
 		i := 0
 		batch := bleve.NewBatch()
