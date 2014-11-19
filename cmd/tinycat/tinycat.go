@@ -8,8 +8,7 @@ import (
 	"os"
 	"runtime"
 	"strings"
-)
-import (
+
 	"github.com/blevesearch/bleve"
 	"github.com/miku/marc22"
 	"github.com/miku/marctools"
