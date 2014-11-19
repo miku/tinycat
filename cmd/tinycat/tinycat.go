@@ -66,6 +66,9 @@ func main() {
 			}
 			line := marctools.RecordToTSV(record, &tags, &fillNA, &separator, &skipIncompleteLines)
 			raw := strings.Split(*line, "\t")
+			if len(raw) < 2 {
+				continue
+			}
 			doc := struct {
 				Id    string
 				Title string
