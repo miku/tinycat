@@ -19,6 +19,7 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	inputFile := flag.String("input", "", "path to the MARC file to index")
 	query := flag.String("q", "", "simple query")
+	batchSize := flag.Int("size", 10000, "number of records to commit at once")
 
 	flag.Parse()
 
@@ -45,7 +46,17 @@ func main() {
 			log.Fatal(err)
 		}
 
+		i := 0
+		batch := bleve.NewBatch()
+
 		for {
+			if i%*batchSize == 0 {
+				err := index.Batch(batch)
+				if err != nil {
+					log.Fatal(err)
+				}
+				batch = bleve.NewBatch()
+			}
 			record, err := marc22.ReadRecord(file)
 			if err == io.EOF {
 				break
@@ -62,10 +73,12 @@ func main() {
 				Id:    strings.TrimSpace(raw[0]),
 				Title: strings.TrimSpace(raw[1]),
 			}
-			err = index.Index(doc.Id, doc)
-			if err != nil {
-				log.Fatal(err)
-			}
+			batch.Index(doc.Id, doc)
+			i++
+		}
+		err = index.Batch(batch)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 
