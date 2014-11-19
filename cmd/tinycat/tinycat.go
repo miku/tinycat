@@ -86,7 +86,10 @@ func main() {
 		return
 	}
 
-	index, _ := bleve.Open("tc.bleve")
+	index, err := bleve.Open("tc.bleve")
+	if err != nil {
+		log.Fatal(err)
+	}
 	q := bleve.NewQueryStringQuery(*query)
 	searchRequest := bleve.NewSearchRequest(q)
 	searchResult, _ := index.Search(searchRequest)
