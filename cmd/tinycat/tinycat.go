@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/blevesearch/bleve"
+	"github.com/blevesearch/bleve/search/highlight/fragment_formatters/ansi"
 	"github.com/miku/marc22"
 	"github.com/miku/marctools"
 )
@@ -21,7 +22,6 @@ func main() {
 	batchSize := flag.Int("size", 10000, "number of records to commit at once")
 
 	flag.Parse()
-
 	if *inputFile != "" {
 		file, err := os.Open(*inputFile)
 
@@ -97,6 +97,8 @@ func main() {
 	q := bleve.NewQueryStringQuery(fullQuery)
 	searchRequest := bleve.NewSearchRequest(q)
 	searchRequest.Highlight = bleve.NewHighlightWithStyle("ansi")
+	ff := ansi.NewFragmentFormatter(ansi.Underscore)
+	bleve.Config.Cache.Highlighters["ansi"].SetFragmentFormatter(ff)
 	sr, err := index.Search(searchRequest)
 	if err != nil {
 		log.Fatal(err)
