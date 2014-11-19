@@ -96,6 +96,10 @@ func main() {
 	}
 	q := bleve.NewQueryStringQuery(fullQuery)
 	searchRequest := bleve.NewSearchRequest(q)
-	searchResult, _ := index.Search(searchRequest)
-	fmt.Println(searchResult.String())
+	searchRequest.Highlight = bleve.NewHighlightWithStyle("ansi")
+	sr, err := index.Search(searchRequest)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(sr)
 }
